@@ -1,0 +1,31 @@
+{
+  "name": "accssnode",
+  "version": "0.1.0",
+  "description": "ACCSS — Ansi-C CSS Compressor C++ Wrapper for Node.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "bin": {
+    "accssnode": "./bin/accssnode"
+  },
+  "main": "./lib/accssnode",
+  "binary": {
+    "module_name" : "accssnode",
+    "module_path" : "./lib/binding/{configuration}/{node_abi}-{platform}-{arch}/"
+  },
+  "scripts": {
+    "test": "node ./test/init.js",
+    "install": "node-gyp rebuild"
+  },
+  "author": "Gandalf Sievers",
+  "license": "MIT",
+  "gypfile": true,
+  "devDependencies": {
+    "mocha": "^2.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acwtools/accssnode.git"
+  }
+}

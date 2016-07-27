@@ -1,0 +1,156 @@
+#!/usr/bin/env node
+
+var accssnode = require('./../lib/accssnode'),
+    fs = require('fs'),
+    process = require('process')
+    version = require('../package.json').version,
+    bin = require('../package.json').name;
+
+var time = process.hrtime();
+
+function usage(name)
+{
+    console.log(name + " [options] [input...]");
+    console.log("-h\t--help\t\t\tprint this help");
+    console.log("-o\t--output\t\twrite output to file (instead of stdout)");
+    console.log("-s\t--stats\t\t\tprint stats (if output present)");
+    console.log("-r\t--restructure-off\tcompression without restructure");
+    console.log("-p\t--preserve-splitted\tdont merge splitted shorthands");
+    console.log("-c\t--compat\t\tcompatibility to browser versions, default=all");
+    console.log("\t\t\t\t\tall, ie7, ie8, ie9, ie10, ie11, chrome, future, none");
+    console.log("\t\t\t\t\t(option includes options right of it)");
+}
+
+var ver =           {'found' : false, 'param' : false, 'value' : ''},
+    help =          {'found' : false, 'param' : false, 'value' : ''},
+    norestructure = {'found' : false, 'param' : false, 'value' : ''},
+    preserve =      {'found' : false, 'param' : false, 'value' : ''},
+    compat =        {'found' : false, 'param' : true,  'value' : 'all'},
+    stats =         {'found' : false, 'param' : false, 'value' : ''},
+    output =        {'found' : false, 'param' : true,  'value' : '-'};
+
+var options = {
+    '-v' : ver,
+    '-h' : help,
+    '-r' : norestructure,
+    '-p' : preserve,
+    '-c' : compat,
+    '-s' : stats,
+    '-o' : output,
+    "--version" : ver,
+    "--help" : help,
+    "--restructure-off" : norestructure,
+    "--preserve-splitted" : preserve,
+    "--compat" : compat,
+    "--stats" : stats,
+    "--output" : output
+};
+
+var input = [];
+var optionMode = true;
+var optionError = false;
+
+for (let i=2, ilen=process.argv.length;i<ilen;i++) {
+    if(optionMode) {
+        if(
+            (process.argv[i].length == 2 && process.argv[i][0] == '-' && process.argv[i][1] != '-')
+            ||
+            (process.argv[i].length > 3 && process.argv[i][0] == '-' && process.argv[i][1] == '-' && process.argv[i][2] != '-')
+        )
+        {
+            let name = process.argv[i];
+            if(typeof(options[name])!='undefined') {
+                options[name].found = true;
+
+                if(options[process.argv[i]].param)
+                {
+                    i++;
+                    if( i < ilen )
+                    {
+                        options[name].value = process.argv[i];
+                    } else {
+                        optionError = true;
+                        break;
+                    }
+                }
+            } else {
+                optionError = true;
+                break;
+            }
+        } else {
+            optionMode = false;
+        }
+    }
+    if(!optionMode) {
+        input.push(process.argv[i]);
+    }
+}
+
+if(optionError) {
+    console.error('Unrecognized option.');
+    process.exit(1);
+}
+
+if(ver.found) {
+    console.log('Version: ' + version);
+    process.exit(0);
+}
+
+if(help.found) {
+    usage(bin);
+    process.exit(0);
+}
+
+var inCSS = '';
+
+var accssOptions = {
+    'restructure-off' : norestructure.found,
+    'preserve-splitted' : preserve.found,
+    'compat' : compat.value
+};
+
+function processInput()
+{
+    var out = accssnode.minify(inCSS, accssOptions);
+    if (output.found) {
+        fs.writeFileSync(output.value, out, 'utf-8');
+        if(stats.found) {
+            let comp = out.length/inCSS.length;
+            let diff = process.hrtime(time);
+            console.log('Compression: ' + comp + '% time: ' + diff + 's');
+        }
+    } else {
+        console.log(out);
+    }
+}
+
+if(input.length)
+{
+    for(let i=0, ilen=input.length;i<ilen;i++) {
+        try
+        {
+            inCSS += fs.readFileSync(input[i], 'utf8');
+        }
+        catch(e)
+        {
+            console.error(e.message);
+            process.exit(1);
+        }
+    }
+    processInput();
+}
+else
+{
+    process.stdin.setEncoding('utf8');
+
+    process.stdin.on('readable', () => {
+      var chunk = process.stdin.read();
+      if (chunk !== null) {
+        inCSS += chunk;
+      }
+    });
+
+    process.stdin.on('end', () => {
+        processInput();
+    });
+}
