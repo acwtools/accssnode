@@ -1,6 +1,6 @@
 # ACCSS - a css compressor written in ansi c
 C++ Wrapper for node-gyp
-Documentation see https://github.com/acwtools/accssnode
+Documentation see https://github.com/acwtools/accss
 
 ## Lib
 ```
