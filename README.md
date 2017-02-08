@@ -2,6 +2,8 @@
 C++ Wrapper for node-gyp
 Documentation see https://github.com/acwtools/accss
 
+ACSS Version 1.2
+
 ## Lib
 ```
     var accssnode = require('accssnode');

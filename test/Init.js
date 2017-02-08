@@ -34,7 +34,7 @@ fs.readdir('../accss/tests/css/src', function(err, files){
     files.forEach(function(file){
         fs.readFile('../accss/tests/css/src/' + file, 'utf8', (err, data) => {
           if (err) throw err;
-          var res = compressor.minify(data, {"restructure" : true, 'preserve-splitted' : false, 'compat' : 'none'});
+          var res = compressor.minify(data, {"restructure" : true, 'preserve-splitted' : false});
           fs.readFile('../accss/tests/css/res/' + file.replace(/\.css$/i, ".res"), 'utf8', (err, dataResult) => {
             if (err) throw err;
             if(res.trim() != dataResult.trim()) {
