@@ -1,6 +1,6 @@
 {
   "name": "accssnode",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "ACCSS — Ansi-C CSS Compressor C++ Wrapper for Node.js",
   "main": "index.js",
   "directories": {
