@@ -30,12 +30,13 @@ var compressor = require('../build/Release/accssnode'),
     fs = require('fs');
 
 
-fs.readdir('../accss/tests/css/src', function(err, files){
+fs.readdir('./accss/tests/css/src', function(err, files){
+    if (err) throw err;
     files.forEach(function(file){
-        fs.readFile('../accss/tests/css/src/' + file, 'utf8', (err, data) => {
+        fs.readFile('./accss/tests/css/src/' + file, 'utf8', (err, data) => {
           if (err) throw err;
           var res = compressor.minify(data, {"restructure" : true, 'preserve-splitted' : false});
-          fs.readFile('../accss/tests/css/res/' + file.replace(/\.css$/i, ".res"), 'utf8', (err, dataResult) => {
+          fs.readFile('./accss/tests/css/res/' + file.replace(/\.css$/i, ".res"), 'utf8', (err, dataResult) => {
             if (err) throw err;
             if(res.trim() != dataResult.trim()) {
                 console.log(file + ' \x1b[1m\x1b[31mFailed!\x1b[0m');
