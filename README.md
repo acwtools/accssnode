@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/acwtools/accssnode.svg?branch=master)](https://travis-ci.org/acwtools/accssnode)
+
 # ACCSS - a css compressor written in ansi c
 C++ Wrapper for node-gyp
 Documentation see https://github.com/acwtools/accss
